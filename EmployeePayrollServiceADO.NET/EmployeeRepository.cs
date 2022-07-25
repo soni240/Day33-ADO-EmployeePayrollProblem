@@ -204,11 +204,53 @@ namespace EmployeePayrollServiceADO.NET
             return nameList;
 
         }
+
+
+        public string AggregateFunctionBasedOnGender(string query)
+        {
+            string nameList = "";
+            try
+            {
+                using (sqlConnection)
+                {
+                    ////query execution
+                    SqlCommand command = new SqlCommand(query, this.sqlConnection);
+                    //open sql connection
+                    sqlConnection.Open();
+
+                    SqlDataReader sqlDataReader = command.ExecuteReader();
+                    if (sqlDataReader.HasRows)
+                    {
+                        while (sqlDataReader.Read())
+                        {
+                            Console.WriteLine("TotalSalary: {0} \t MinimumSalary: {1} \t MaximumSalary: {2}AverageSalary: {3} \t Count: {4}", sqlDataReader[0], sqlDataReader[1], sqlDataReader[2], sqlDataReader[3], sqlDataReader[4]);
+                            nameList += sqlDataReader[0] + " " + sqlDataReader[1] + " " + sqlDataReader[2] + " " + sqlDataReader[3] + " " + sqlDataReader[4];
+                        }
+                    }
+                    //close reader
+                    sqlDataReader.Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+
+                sqlConnection.Close();
+            }
+            //returns the count of employee in the list between the given range
+            return nameList;
+
+        }
+
         public void DisplayEmployeeDetails(SqlDataReader sqlDataReader)
         {
             //Read data SqlDataReader and store 
             employeeDataManager.id = sqlDataReader.GetInt32(0);
-            employeeDataManager.name = sqlDataReader["EmployeeName"].ToString();
+            employeeDataManager.name = sqlDataReader["name"].ToString();
             employeeDataManager.salary = Convert.ToDouble(sqlDataReader["salary"]);
             employeeDataManager.Deduction = Convert.ToDouble(sqlDataReader["Deduction"]);
             employeeDataManager.IncomeTax = Convert.ToDouble(sqlDataReader["IncomeTax"]);
@@ -218,8 +260,8 @@ namespace EmployeePayrollServiceADO.NET
             employeeDataManager.EmployeePhoneNumber = Convert.ToInt64(sqlDataReader["EmployeePhoneNumber"]);
             employeeDataManager.EmployeeDepartment = sqlDataReader["EmployeeDepartment"].ToString();
             employeeDataManager.Address = sqlDataReader["Address"].ToString();
-            employeeDataManager.startDate = Convert.ToDateTime(sqlDataReader["StartDate"]);
-            //Display 
+            employeeDataManager.startDate = Convert.ToDateTime(sqlDataReader["startDate"]);
+            //Display Data
             Console.WriteLine("\nEmployee ID: {0} \t Employee Name: {1} \nBasic Pay: {2} \t Deduction: {3} \t Income Tax: {4} \t Taxable Pay: {5} \t NetPay: {6} \nGender: {7} \t PhoneNumber: {8} \t Department: {9} \t Address: {10} \t Start Date: {11}", employeeDataManager.id, employeeDataManager.name, employeeDataManager.salary, employeeDataManager.Deduction, employeeDataManager.IncomeTax, employeeDataManager.TaxablePay, employeeDataManager.NetPay, employeeDataManager.Gender, employeeDataManager.EmployeePhoneNumber, employeeDataManager.EmployeeDepartment, employeeDataManager.Address, employeeDataManager.startDate);
 
         }
